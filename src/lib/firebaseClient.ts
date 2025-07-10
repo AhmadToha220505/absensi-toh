@@ -1,12 +1,8 @@
-// src/lib/firebaseClient.ts
-
-// Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
+import { getAnalytics, isSupported } from "firebase/analytics";
 
-// Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyDYISnNhVbKUJnBqyd1tXLmeGyM5HOKQZE",
   authDomain: "absensi-737a6.firebaseapp.com",
@@ -17,10 +13,21 @@ const firebaseConfig = {
   measurementId: "G-JNQQLWYY76"
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
 
-// ✅ Tambahkan ini
+// ✅ Export auth dan db seperti sebelumnya
 export const auth = getAuth(app);
 export const db = getFirestore(app);
+
+// ✅ Jalankan analytics hanya jika di browser
+let analytics: ReturnType<typeof getAnalytics> | null = null;
+
+if (typeof window !== "undefined") {
+  isSupported().then((supported) => {
+    if (supported) {
+      analytics = getAnalytics(app);
+    }
+  });
+}
+
+export { analytics };
